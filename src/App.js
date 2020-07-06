@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react'
+import './App.css'
 
-function App() {
+const App = () => {
+  let [data,setData] = useState({});
+  let [input,setInput] = useState('');
+
+  const inputHandler = (event) => {
+    if (event.key === "Enter") {
+      setInput(event.target.value);
+      console.log(data);
+    }
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      const url = `https://api.github.com/users/${input}`;
+      const response = await fetch(url);
+      const result = await response.json();
+      console.log(result)
+      setData(result);
+    }
+    fetchData();
+  }, [input]);
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div className='container'>
+         <input onKeyPress={inputHandler} type='text' placeholder='username' name='text' id='text'></input>
+          <img className='image' src={data.avatar_url} alt=''></img>
+          <h1>{data.name}</h1>
+          <p>Followers: {data.followers}</p>
+          <p>Repositories: {data.public_repos}</p>
+          <p>Following: {data.following}</p>
+          </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
